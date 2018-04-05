@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Weather App</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+	<script>
+		$(document).ready(function(){
+			var long;
+			var lat;
+			var Kelvin;
+			var fTemp;
+			var cTemp;
+			var tempSwap = true;
+           //here we are getting our geolocation according to your area (lat/lot)
+           if (navigator.geolocation) {
+           	navigator.geolocation.getCurrentPosition(function(position){
+           		long = position.coords.longitude;
+           		lat = position.coords.latitude;
+           		//console.log(long);
+           		//console.log(lat);
+             //create API with geolocation
+           	var api = 'http://api.openweathermap.org/data/2.5/weather?lat='+lat+'&lon='+long+'&appid=1eb43c02cd79317f0abbd2ec10c3c233';
+           	//var api = "http://api.openweathermap.org/data/2.5/weather?id=2172797&appid=1eb43c02cd79317f0abbd2ec10c3c233";
+
+
+			$.getJSON(api, function(data){
+				//JSON call for open weather API
+                var weatherType = data.weather[0].description;
+                //console.log(weatherType);
+                kelvin = data.main.temp;
+                //console.log(kelvin);
+                var windSpeed = data.wind.speed;
+                var city = data.name;
+                var icon = data.weather[0].icon;
+                //console.log(icon);
+
+
+                //Temp in F
+                cTemp = Kelvin-273;
+                //console.log(cTemp);
+                //Temperture in Kelvin
+                fTemp = (kelvin)*(9/5)-459.67;
+                //console.log(fTemp);
+
+
+                //here I am adding my output to the html page
+                 $("#city").html(city);
+                 $("#weatherType").html(weatherType);
+                 $("#fTemp").html("Tempreture: " +Math.round(fTemp)+ '&deg;F');
+
+                 //here we are adding our dynamic "icon"
+                 var iconSrc ="http://openweathermap.org/img/w/" + icon +".png";
+                 $("#city").append('<img src=' + iconSrc + '>');
+
+
+                 //this is our click toggle function
+                 $("#toggle").click(function(){
+                 	console.log(fTemp);
+
+                     if ("fTemp" == true ){
+                     	getElementsById("#fTemp").html("Tempreture:"(fTemp - 32)/1.8 +'&deg;C')
+                     }
+                 });
+
+                 //windSpeed output - html
+                 $("#windSpeed").html("Wind Speed: " +windSpeed);
+								//alert(data.coord.lat);
+							})
+           	});
+           }
+		});
+	</script>
+</head>
+<body>
+	<div class="container">
+
+		<div class="jumbotron">
+		  <h1 class="display-3">Local Weather App</h1>
+
+		  <hr class="my-4">
+
+		  <p><h3 class="City" id="city">Getting location...</h3></p>
+		  <p id="weatherType"></p>
+		  <p id="fTemp"><a href="#" id="toggle">Toggle C/F</a></p>
+		  <p id="windSpeed"></p>
+		  <button id="toggle">C/F</button>
+	 </div>
+
+	</div>
+</body>
+</html>
